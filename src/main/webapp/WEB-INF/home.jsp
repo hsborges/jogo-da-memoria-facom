@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>    
 <!DOCTYPE html>
 <html>
 
@@ -39,29 +40,16 @@
       <div class="ranking-title">
         <h2>Ranking</h2>
       </div>
+      <% 
+      List<String> ranking = (List<String>)request.getAttribute("ranking");
+      for (int i = 0; i < ranking.size(); i++) { %>
       <div class="ranking-user">
-        <p class="ranking-position">1</p>
+        <p class="ranking-position"><%= i + 1 %></p>
         <div class="ranking-avatar"><img></div>
-        <h3 class="ranking-username">Isabela Resende</h3>
+        <h3 class="ranking-username"><%= ranking.get(i) %></h3>
         <img class="ranking-trophy" src="/public/imagens/medalha-ouro.png">
       </div>
-      <div class="ranking-user">
-        <p class="ranking-position">2</p>
-        <div class="ranking-avatar"><img></div>
-        <h3 class="ranking-username">Victor Marques</h3>
-        <img class="ranking-trophy" src="/public/imagens/medalha-prata.png">
-      </div>
-      <div class="ranking-user">
-        <p class="ranking-position">3</p>
-        <div class="ranking-avatar"><img></div>
-        <h3 class="ranking-username">Raú Lion</h3>
-        <img class="ranking-trophy" src="/public/imagens/medalha-bronze.png">
-      </div>
-      <div class="ranking-user">
-        <p class="ranking-position">4</p>
-        <div class="ranking-avatar"><img></div>
-        <h3 class="ranking-username">Giovanna Coelho</h3>
-      </div>
+      <% } %>
     </div>
   </section>
   <footer class="footer"></footer>

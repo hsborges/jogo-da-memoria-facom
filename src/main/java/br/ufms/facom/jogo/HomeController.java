@@ -1,6 +1,9 @@
 package br.ufms.facom.jogo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +27,16 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		List<String> ranking = new ArrayList<String>();
+		ranking.add("Hudson Borges");
+		ranking.add("Maria Jose");
+		ranking.add("Jose Maria");
+		
+		if (request.getParameter("nome") != null)
+			ranking.add((String)request.getParameter("nome"));
+		
+		request.setAttribute("ranking", ranking);
+		
 		request.getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
 	}
 }
