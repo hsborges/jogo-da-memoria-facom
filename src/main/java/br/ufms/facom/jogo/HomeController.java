@@ -24,10 +24,6 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String nome = request.getParameter("nome");
-		if (nome != null)
-			response.getWriter().append("Ola " + nome);
-		else
-			response.getWriter().append("Ola pessoas de PROGWEB");
+		request.getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
 	}
 }
