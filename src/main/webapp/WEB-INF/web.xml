@@ -9,4 +9,12 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+  <servlet>
+  	<servlet-name>home</servlet-name>
+  	<servlet-class>br.ufms.facom.jogo.HomeController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>home</servlet-name>
+  	<url-pattern>/home</url-pattern>
+  </servlet-mapping>
 </web-app>
