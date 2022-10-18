@@ -52,5 +52,11 @@
 	    <artifactId>sqlite-jdbc</artifactId>
 	    <version>3.39.3.0</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl-api -->
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>jstl</artifactId>
+	    <version>1.2</version>
+	</dependency>
   </dependencies>
 </project>

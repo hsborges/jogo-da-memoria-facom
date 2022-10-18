@@ -2,9 +2,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.util.List, br.ufms.facom.jogo.entities.Jogador" %>    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
@@ -19,12 +19,12 @@
 
 </head>
 
-<body>
+<body class="theme">
   <header class="header">
     <h1>Jogo da Memória</h1>
   </header>
   <section class="conteudo">
-    <div class="jogo">
+    <div class="jogo theme-alt">
       <div class="jogo-stats">
         <p class="jogadas">
           <span class="jogadas-bold">
@@ -36,24 +36,29 @@
         <input type="image" src="<%= request.getContextPath() %>/public/imagens/reload.png" class="botao-restart" onclick="restartTimer()">
       </div>
       <div class="jogo-area"></div>
-    </div>
-    <div class="ranking">
+    </div> 
+    <div class="ranking theme-alt">
       <div class="ranking-title">
         <h2>Ranking</h2>
       </div>
-      <% 
-      List<Jogador> ranking = (List<Jogador>)request.getAttribute("ranking");
-      for (int i = 0; i < ranking.size(); i++) { %>
-      <div class="ranking-user">
-        <p class="ranking-position"><%= i + 1 %></p>
-        <div class="ranking-avatar"><img></div>
-        <h3 class="ranking-username"><%= ranking.get(i).getUsername() %></h3>        
-        <% if (i == 0) out.println("<img class=\"ranking-trophy\" src=\"" + request.getContextPath() + "/public/imagens/medalha-ouro.png\">"); %>
-        <% if (i == 1) out.println("<img class=\"ranking-trophy\" src=\"" + request.getContextPath() + "/public/imagens/medalha-prata.png\">"); %>
-        <% if (i == 2) out.println("<img class=\"ranking-trophy\" src=\"" + request.getContextPath() + "/public/imagens/medalha-bronze.png\">"); %>
-        
-      </div>
-      <% } %>
+      <c:forEach var="user" varStatus="status" items="${ranking}">
+      	<div class="ranking-user">
+	        <p class="ranking-position"><c:out value="${status.index + 1}" /></p>
+	        <div class="ranking-avatar"><img></div>
+	        <h3 class="ranking-username"><c:out value="${user.username}" /></h3>        
+	        <c:choose>
+	        	<c:when test="${status.index == 0}" >
+	        		<img class="ranking-trophy" src="<%= request.getContextPath() %>/public/imagens/medalha-ouro.png">
+	        	</c:when>
+	        	<c:when test="${status.index == 1}" >
+	        		<img class="ranking-trophy" src="<%= request.getContextPath() %>/public/imagens/medalha-prata.png">
+	        	</c:when>
+	        	<c:when test="${status.index == 2}" >
+	        		<img class="ranking-trophy" src="<%= request.getContextPath() %>/public/imagens/medalha-bronze.png">
+	        	</c:when>
+	        </c:choose>	        
+	      </div>
+      </c:forEach>
     </div>
   </section>
   <footer class="footer"></footer>

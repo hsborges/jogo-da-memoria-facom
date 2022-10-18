@@ -4,8 +4,16 @@ body {
   width: 100vw;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  background-color: #FAF9F6;
-  color: white;
+}
+
+.theme {
+  color: blueviolet;
+  background-color: #e2e3e7;
+}
+
+.theme-alt {
+  color: #e2e3e7;
+  background-color: blueviolet;
 }
 
 h1 {
@@ -32,7 +40,6 @@ body {
   display: flex;
   justify-content: center;
   height: 75px;
-  background-color: rgba(158, 0, 255, 1);
 }
 
 .conteudo {
@@ -42,7 +49,7 @@ body {
   margin-right: 30px;
 }
 
-.conteudo>* {
+.conteudo > * {
   margin: 10px;
 }
 
@@ -59,13 +66,10 @@ body {
 /* JOGO STATS */
 .jogo-stats {
   display: flex;
-  height: 80px;
-  border-radius: 15px;
-  background-color: rgba(87, 0, 129, 1);
-  margin-bottom: 20px;
   justify-content: space-around;
   align-items: center;
 }
+
 
 .botao-restart {
   width: 20px;
@@ -90,7 +94,6 @@ body {
 /* JOGO AREA */
 .jogo-area {
   flex-grow: 1;
-  background-color: rgba(158, 0, 255, 1);
   display: grid;
   grid-template-columns: repeat(6, 75px);
   grid-template-rows: repeat(4, 75px);
@@ -111,6 +114,10 @@ body {
   text-align: center;
 }
 
+.celula > span {
+	display: none;
+}
+
 .celula:hover {
   cursor: pointer;
 }
@@ -121,12 +128,14 @@ body {
   color: white;
 }
 
+.celula.virado > span {
+	display: inherit;
+}
+
 
 /* RANKING */
 .ranking {
   width: 250px;
-  background-color: #212121;
-  border-radius: 15px;
 }
 
 .ranking-title {

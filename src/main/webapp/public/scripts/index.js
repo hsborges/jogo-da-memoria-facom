@@ -22,7 +22,7 @@ function openCard(event) {
       setTimeout(() => {
         cardsVirados.forEach((celula) => celula.classList.remove('virado'));
         cardsVirados[0] = cardsVirados[1] = null;
-      }, 3000);  
+      }, 2000);  
     }
     
     
@@ -70,17 +70,15 @@ function restartTimer() {
 
   const novasCelulas = [];
   for (let i = 0; i < 12; i++) {
-    let celula = document.createElement('div');
-    celula.classList.add('celula', `celula-${i}`);
-    celula.addEventListener('click', openCard);
-    celula.innerHTML = i;
-    novasCelulas.push(celula);
-    
-    celula = document.createElement('div');
-    celula.classList.add('celula', `celula-${i}`);
-    celula.addEventListener('click', openCard);
-    celula.innerHTML = i;
-    novasCelulas.push(celula);
+	for (let j = 0; j < 2; j++) {
+		let celula = document.createElement('div');
+    	celula.classList.add('celula', `celula-${i}`);
+    	celula.addEventListener('click', openCard);
+    	let content = document.createElement('span');
+    	content.innerHTML = i;
+    	celula.append(content);
+    	novasCelulas.push(celula);
+	}
   }
 
   area.append(..._.shuffle(novasCelulas));
