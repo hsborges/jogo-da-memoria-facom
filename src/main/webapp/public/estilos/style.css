@@ -8,11 +8,11 @@ body {
 
 .theme {
   color: blueviolet;
-  background-color: #e2e3e7;
+  background-color: #f3f3fa;
 }
 
 .theme-alt {
-  color: #e2e3e7;
+  color: #f3f3fa;
   background-color: blueviolet;
 }
 
@@ -70,6 +70,18 @@ body {
   align-items: center;
 }
 
+.jogo-stats > *:not(:nth-child(2)) {
+	width: 225px;
+}
+
+.jogo-stats > *:nth-child(1) {
+	text-align: left;
+}
+
+.jogo-stats > *:nth-child(3) {
+	text-align: right;
+}
+
 
 .botao-restart {
   width: 20px;
@@ -114,8 +126,10 @@ body {
   text-align: center;
 }
 
-.celula > span {
+.celula > * {
 	display: none;
+	max-width: 100%;
+	max-height: 100%;
 }
 
 .celula:hover {
@@ -128,14 +142,16 @@ body {
   color: white;
 }
 
-.celula.virado > span {
-	display: inherit;
+.celula.virado > *:not(img) {
+	display: block;
 }
 
 
 /* RANKING */
 .ranking {
   width: 250px;
+  border-left: 1px solid #f3f3fa;
+  padding-left: 15px;
 }
 
 .ranking-title {

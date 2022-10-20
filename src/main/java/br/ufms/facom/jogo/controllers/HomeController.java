@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.Persistence;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,19 +18,20 @@ import br.ufms.facom.jogo.entities.Jogador;
  */
 @WebServlet(value = "/home")
 public class HomeController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	
-	@PersistenceContext(name = "pu-sqlite")
-	private EntityManager em;
+    private static final long serialVersionUID = 1L;
 
+    private EntityManager em = Persistence.createEntityManagerFactory("pu-sqlite").createEntityManager();
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		List<Jogador> ranking = this.em.createQuery("SELECT j FROM Jogador j").getResultList();
-		request.setAttribute("ranking", ranking);
-		request.getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
-	}
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<Jogador> ranking = this.em.createQuery("SELECT j FROM Jogador j").getResultList();
+        request.setAttribute("ranking", ranking);
+        request.getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
+    }
 }

@@ -10,66 +10,106 @@ import javax.persistence.*;
  *
  */
 @Entity
-@Table(name = "jogadores")
+@Table(name = "jogadores", indexes = @Index(columnList = "email"))
 public class Jogador implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id", nullable = false)
-	private Integer id;
-	
-	@Column(name = "username", nullable = false, unique = true)
-	private String username;
-	
-	@Column(name = "password", nullable = false)
-	private String password;
-	
-	@Column(name = "created_at", nullable = true)
-	private Date createdAt = new Date(); 
+    private static final long serialVersionUID = 1L;
 
-	public Jogador() {
-		super();
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-	public Jogador(String username, String password) {
-		super();
-		this.username = username;
-		this.password = password;
-	}
+    @Column(name = "name", nullable = false)
+    private String name;
 
-	public Integer getId() {
-		return id;
-	}
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Column(name = "password", nullable = false)
+    private String password;
 
-	public String getUsername() {
-		return username;
-	}
+    @Lob
+    @Column(name = "avatar")
+    private String avatar;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    @Column(name = "created_at", nullable = true, columnDefinition = "DEFAULT CURRENT_TIMESTAMP")
+    private Date createdAt = new Date();
 
-	public String getPassword() {
-		return password;
-	}
+    public Jogador() {
+        super();
+    }
+    
+    public Jogador(String name, String email, String password) {
+        super();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+    
+    public Jogador(String name, String email, String password, String avatar) {
+        super();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.avatar = avatar;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public Jogador(String name, String email, String password, String avatar, Date createdAt) {
+        super();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.avatar = avatar;
+        this.createdAt = createdAt;
+    }
 
-	public Date getCreatedAt() {
-		return createdAt;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-   
-	
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }

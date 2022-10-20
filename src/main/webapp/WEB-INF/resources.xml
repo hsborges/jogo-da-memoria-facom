@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomee>
+	<Resource id="myDS" type="DataSource">
+		JdbcDriver = org.sqlite.JDBC
+		JdbcUrl = jdbc:sqlite::memory:
+		UserName =
+		Password =
+	</Resource>
+</tomee>
