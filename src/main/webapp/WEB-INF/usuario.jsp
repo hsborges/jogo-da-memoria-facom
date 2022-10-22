@@ -19,9 +19,9 @@
 		};
 	</script>
 	<style>
-	div.container { padding-top: 40px; }
+	.valign-wrapper { height: 95%; } 
 	div.container form > *:last-child { padding-top: 25px; display: flex; justify-content: flex-end; align-items: center; column-gap: 10px; }
-	.file-field > div { display: flex; }
+	.file-field > div { display: flex; } 
 	.file-field > div > .material-icons { padding-right: 5px; }
 	</style> 
 </c:set> 
@@ -120,19 +120,21 @@
 <t:layout>
 	<jsp:attribute name="head">${head}</jsp:attribute>
 	<jsp:body>
-	<div class="container">
-		<div class="row">
-			<c:choose>
-				<c:when test="${param.action == 'cadastro'}">
-				${cadastroForm}	
-				</c:when>
-				<c:when test="${param.action == 'info'}">
-				${infoForm}	
-				</c:when>
-				<c:otherwise>
-				${loginForm}
-				</c:otherwise>
-			</c:choose>
+	<div class="valign-wrapper">
+		<div class="container"> 
+			<div class="row">
+				<c:choose>
+					<c:when test="${param.action == 'cadastro'}">
+					${cadastroForm}	
+					</c:when>
+					<c:when test="${param.action == 'info'}">
+					${infoForm}	
+					</c:when>
+					<c:otherwise>
+					${loginForm}
+					</c:otherwise>
+				</c:choose>
+			</div>
 		</div>
 	</div>
 	</jsp:body>

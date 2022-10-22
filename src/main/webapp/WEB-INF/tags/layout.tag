@@ -64,27 +64,26 @@ body>header a {
 body>header>section.title {
 	display: flex;
 	align-items: center;
+	justify-content: flex-start;
 	font-size: 25px;
 	font-weight: 700;
 	font-size: 25px;
+	column-gap: 10px;
 }
 
 body>header>section.menu > a {
 	font-size: smaller;
 	position: absolute;
 	right: 40px;
-	height: 75px;
+	height: 85px;
 	display: flex;
-	flex-direction: column;
+	flex-direction: column; 
 	justify-content: center;
 	align-items: center;
 }
 
 body>section.conteudo {
 	flex-grow: 1;
-	display: flex;
-	margin: 15px;
-	margin-top: 0;
 }
 
 .underline { text-decoration: underline; }
@@ -93,7 +92,7 @@ body>section.conteudo {
 <body class="theme">
 	<header>
 		<section class="title">
-			<a href="<%=request.getContextPath()%>">Jogo da Memória</a>
+			<a href="<%=request.getContextPath()%>">Jogo da Memória (<abbr title="Faculdade de Computação / Universidade Federal de Mato Grosso do Sul">FACOM/UFMS</abbr>)</a>
 		</section>
 		<section class="menu">
 			<c:choose>

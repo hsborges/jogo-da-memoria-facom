@@ -29,12 +29,14 @@ public class RankingRepositoryImpl implements RankingRepository {
         else if (instance.getJogador() == null)
             throw new Exception("Somente partidas de usuários logados entram no ranking!");
 
-        Long position = (Long) this.em
+        Object position = this.em
                 .createQuery("SELECT COUNT(r) FROM Ranking r WHERE r.partida.pontuacao > :pontuacao")
                 .setParameter("pontuacao", instance.getPartida().getPontuacao())
                 .getSingleResult();
 
-        instance.setPosicao(position);
+        System.out.println(position);
+
+        instance.setPosicao((Long) position);
 
         this.em.getTransaction().begin();
         this.em.persist(instance);

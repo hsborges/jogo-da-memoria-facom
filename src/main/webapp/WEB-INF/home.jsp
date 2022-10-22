@@ -13,16 +13,23 @@
 	<script type="text/javascript">const CONTEXT_PATH = "<%= request.getContextPath().trim() %>";</script>
 	
 	<style>
+	.container-fluid {
+	  display: flex;
+	  min-height: 100%;
+	}
+	 
 	.jogo {
 	  flex-grow: 1;
 	  display: flex;
 	  flex-direction: column;
+	  border-right: 1px solid #f3f3fa;
 	}
 	
 	.jogo .jogo-stats {
 	  display: flex;
 	  padding: 0 25px;
 	  align-items: center;
+	  margin-top: 0;
 	}
 	
 	.jogo .jogo-stats > *:not(:nth-child(2)) {
@@ -97,8 +104,7 @@
 
 	/* RANKING */
 	.ranking {
-	  width: 250px;
-	  border-left: 1px solid #f3f3fa;
+	  width: 325px;
 	  padding: 0 10px;
 	}
 	
@@ -167,67 +173,69 @@
 </c:set>
 
 <c:set var="body">
-	<div class="jogo">
-		<div class="jogo-stats">
-			<p class="jogadas">
-				<span class="jogadas-title"> Número de jogadas: </span> 
-				<span class="jogadas-count">0</span> 
-				<br /> 
-				<span class="jogadas-title">Acertos: </span> 
-				<span class="acertos-count">0</span>
-				<br /> 
-				<span class="jogadas-title">Pontuação: </span> 
-				<span class="pontuacao-count">0</span>
-			</p>
-			<p class="timer">00:00</p>
-			<p>
-				<input type="image"
-					src="<%=request.getContextPath()%>/public/imagens/reload.png"
-					class="botao-restart" onclick="restartTimer()">
-			</p>
-		</div>
-		<div class="jogo-area"></div>
-	</div>
-	<div class="ranking">
-		<div class="title">
-			<span>Ranking</span>
-		</div>
-		<c:forEach var="rank" varStatus="status" items="${ranking}">
-			<div class="user">
-				<p class="position">
-					<c:out value="${status.index + 1}" />
+	<div class="container-fluid">
+		<div class="jogo">
+			<div class="jogo-stats">
+				<p class="jogadas">
+					<span class="jogadas-title"> Número de jogadas: </span> 
+					<span class="jogadas-count">0</span> 
+					<br /> 
+					<span class="jogadas-title">Acertos: </span> 
+					<span class="acertos-count">0</span>
+					<br /> 
+					<span class="jogadas-title">Pontuação: </span> 
+					<span class="pontuacao-count">0</span>
 				</p>
-				<div class="avatar">
-					<c:if test="${rank.jogador.avatar != null}">
-						<img src="data:image/png;base64, ${rank.jogador.avatar}"
-							width="32" height="32">
-					</c:if>
-					<c:if test="${rank.jogador.avatar == null}">
-						<img
-							src="https://eu.ui-avatars.com/api/?name=${rank.jogador.name}&size=32"
-							width="32" height="32">
-					</c:if>
-				</div>
-				<span class="name">
-					${rank.jogador.name} <br /> <strong>${rank.partida.pontuacao}
-						pts</strong>
-				</span>
-				<c:choose>
-					<c:when test="${status.index == 0}">
-						<img class="trophy"
-							src="<%=request.getContextPath()%>/public/imagens/medalha-ouro.png">
-					</c:when>
-					<c:when test="${status.index == 1}">
-						<img class="trophy"
-							src="<%=request.getContextPath()%>/public/imagens/medalha-prata.png">
-					</c:when>
-					<c:when test="${status.index == 2}">
-						<img class="trophy"
-							src="<%=request.getContextPath()%>/public/imagens/medalha-bronze.png">
-					</c:when>
-				</c:choose>
+				<p class="timer">00:00</p>
+				<p>
+					<input type="image"
+						src="<%=request.getContextPath()%>/public/imagens/reload.png"
+						class="botao-restart" onclick='window.location.href = "<%= request.getContextPath() %>"' >
+				</p>
 			</div>
-		</c:forEach>
+			<div class="jogo-area"></div>
+		</div>
+		<div class="ranking">
+			<div class="title">
+				<span>Ranking</span>
+			</div>
+			<c:forEach var="rank" varStatus="status" items="${ranking}">
+				<div class="user">
+					<p class="position">
+						<c:out value="${status.index + 1}" />
+					</p>
+					<div class="avatar">
+						<c:if test="${rank.jogador.avatar != null}">
+							<img src="data:image/png;base64, ${rank.jogador.avatar}"
+								width="32" height="32">
+						</c:if>
+						<c:if test="${rank.jogador.avatar == null}">
+							<img
+								src="https://eu.ui-avatars.com/api/?name=${rank.jogador.name}&size=32"
+								width="32" height="32">
+						</c:if>
+					</div>
+					<span class="name">
+						${rank.jogador.name} <br /> <strong>${rank.partida.pontuacao}
+							pts</strong>
+					</span>
+					<c:choose>
+						<c:when test="${status.index == 0}">
+							<img class="trophy"
+								src="<%=request.getContextPath()%>/public/imagens/medalha-ouro.png">
+						</c:when>
+						<c:when test="${status.index == 1}">
+							<img class="trophy"
+								src="<%=request.getContextPath()%>/public/imagens/medalha-prata.png">
+						</c:when>
+						<c:when test="${status.index == 2}">
+							<img class="trophy"
+								src="<%=request.getContextPath()%>/public/imagens/medalha-bronze.png">
+						</c:when>
+					</c:choose>
+				</div>
+			</c:forEach>
+		</div>
 	</div>
 	
 	<!-- Modal Structure -->
