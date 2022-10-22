@@ -1,12 +1,8 @@
 package br.ufms.facom.jogo.repositories.ranking;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-
-import org.apache.commons.beanutils.BeanUtils;
 
 import br.ufms.facom.jogo.entities.Partida;
 import br.ufms.facom.jogo.entities.Ranking;
@@ -37,10 +33,10 @@ public class RankingRepositoryImpl implements RankingRepository {
                 .createQuery("SELECT COUNT(r) FROM Ranking r WHERE r.partida.pontuacao > :pontuacao")
                 .setParameter("pontuacao", instance.getPartida().getPontuacao())
                 .getSingleResult();
-        
+
         instance.setPosicao(position);
 
-        this.em.getTransaction().begin();        
+        this.em.getTransaction().begin();
         this.em.persist(instance);
         this.em.createQuery(
                 "UPDATE Ranking r SET r.posicao = r.posicao + 1 WHERE r.partida.pontuacao < :pontuacao")

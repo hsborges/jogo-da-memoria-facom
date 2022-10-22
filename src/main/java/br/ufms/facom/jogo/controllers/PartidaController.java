@@ -84,9 +84,10 @@ public class PartidaController extends HttpServlet {
         Long tempo = Long.parseLong(request.getParameter("tempo"));
         Long jogadas = Long.parseLong(request.getParameter("jogadas"));
         Long acertos = Long.parseLong(request.getParameter("acertos"));
+        String ordemAcertos = request.getParameter("ordemAcertos");
         Long pontuacao = Long.parseLong(request.getParameter("pontuacao"));
 
-        Partida partida = this.partidasRepo.save(new Partida(uuid, jogador, tempo, acertos, jogadas, pontuacao));
+        Partida partida = this.partidasRepo.save(new Partida(uuid, jogador, tempo, acertos, ordemAcertos, jogadas, pontuacao));
 
         if (partida.isFinalizada()) {
             try {

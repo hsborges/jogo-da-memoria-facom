@@ -9,6 +9,7 @@
 <c:set var="head">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 	<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+	<script src="http://chancejs.com/chance.min.js"></script>	
 	<script type="text/javascript">const CONTEXT_PATH = "<%= request.getContextPath().trim() %>";</script>
 	
 	<style>
@@ -161,7 +162,7 @@
 	.modal-content .content { font-size: 1.25em; }
 	.modal-content .content:not(:first-child) { margin: 0 0.5em; } 
 	.modal-content #pontuacao.content { font-weight: bold; padding: 15px; font-size: 2em; }
-	.modal-content .content.register-message a { padding: 0 5px; }
+	.modal-content .content.register-message a, .modal-content .content.success-message a { padding: 0 5px; }
 	</style>
 </c:set>
 
@@ -241,7 +242,7 @@
 	    	Faça <a class="primary-text" href="<%= request.getContextPath() %>/usuario">login ou cadastre-se</a> para salvar seus resultados!
 	    </p>
 	    </c:if>
-	    <c:if test="${sessionScope.jogador == null}">
+	    <c:if test="${sessionScope.jogador != null}">
 	    <p class="content secondary-text success-message">
 	    	Acesse seu <a class="primary-text" href="<%= request.getContextPath() %>/historico">histórico</a> ou recarregue acessar o ranking atualizado!
 	    </p>
@@ -255,7 +256,10 @@
 
 <c:set var="end">
 	<script src="<%=request.getContextPath()%>/public/scripts/home.js"></script>
-	<script type="text/javascript">restartTimer();</script>
+	<script type="text/javascript">
+		populateCards();
+		if (params.uuid) startTimer();
+	</script>
 </c:set>
 
 <t:layout>

@@ -138,7 +138,7 @@ public class UserController extends HttpServlet {
                 this.em.getTransaction().commit();
             }
 
-            response.sendRedirect(request.getContextPath() + "/?uuid=" + uuid);
+            response.sendRedirect(request.getContextPath() + "/home?uuid=" + uuid);
         } catch (NoResultException nre) {
             request.setAttribute("message", "Usuário não encontrado ou senha incorreta!");
             this.doGet(request, response);

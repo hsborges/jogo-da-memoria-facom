@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Entity implementation class for Entity: Partida
@@ -32,27 +33,32 @@ public class Partida implements Serializable {
 
 	@Column(name = "acertos", nullable = false)
     private Long acertos;
+	
+	@JsonProperty("ordem_acertos")
+	@Column(name = "ordem_acertos", nullable = false)
+    private String ordemAcertos;
 
 	@Column(name = "tempo", nullable = false)
 	private Long tempo;
 
-	@Column(name = "jogadas", nullable = false)
+    @Column(name = "jogadas", nullable = false)
     private Long jogadas;
 
     @Column(name = "pontuacao", nullable = false)
     private Long pontuacao;
 
-    public Partida() {
+	public Partida() {
 		super();
 	}
 
-    public Partida(String uuid, Jogador jogador, Long tempo, Long acertos, Long jogadas, Long pontuacao) {
+    public Partida(String uuid, Jogador jogador, Long tempo, Long acertos, String ordemAcertos, Long jogadas, Long pontuacao) {
         super();
         this.uuid = uuid;
         this.jogador = jogador;
         this.tempo = tempo;
         this.jogadas = jogadas;
         this.acertos = acertos;
+        this.ordemAcertos = ordemAcertos;
         this.pontuacao = pontuacao;
     }
 
@@ -60,16 +66,20 @@ public class Partida implements Serializable {
         return acertos;
     }
 
-	public Long getJogadas() {
+    public Long getJogadas() {
         return jogadas;
     }
 
-
-	public Jogador getJogador() {
+    public Jogador getJogador() {
         return jogador;
     }
 
-    public Long getPontuacao() {
+	public String getOrdemAcertos() {
+        return ordemAcertos;
+    }
+
+
+	public Long getPontuacao() {
         return pontuacao;
     }
 
@@ -79,6 +89,10 @@ public class Partida implements Serializable {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public boolean isFinalizada() {
+        return this.acertos == 12;
     }
 
 
@@ -95,6 +109,10 @@ public class Partida implements Serializable {
         this.jogador = jogador;
     }
 
+    public void setOrdemAcertos(String ordemAcertos) {
+        this.ordemAcertos = ordemAcertos;
+    }
+
     public void setPontuacao(Long pontuacao) {
         this.pontuacao = pontuacao;
     }
@@ -102,13 +120,9 @@ public class Partida implements Serializable {
     public void setTempo(Long tempo) {
         this.tempo = tempo;
     }
-
+    
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-    
-    public boolean isFinalizada() {
-        return this.acertos == 12;
     }
 
     @Override
