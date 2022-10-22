@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.ufms.facom.jogo.entities.Jogador;
+import br.ufms.facom.jogo.entities.Ranking;
 
 /**
  * Servlet implementation class HomeController
@@ -27,11 +27,13 @@ public class HomeController extends HttpServlet {
      *      response)
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Jogador> ranking = this.em.createQuery("SELECT j FROM Jogador j").getResultList();
+        List<Ranking> ranking = this.em.createQuery("SELECT r FROM Ranking r ORDER BY r.posicao ASC ").setMaxResults(10).getResultList();
         request.setAttribute("ranking", ranking);
+
         request.getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
     }
 }

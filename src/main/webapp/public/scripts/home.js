@@ -1,49 +1,97 @@
 let inicio = null;
 let intervalo = null;
+let uuid = null;
 
 let jogadas = 0;
+let acertos = 0;
+let pontuacao = 0;
+
+let restauraCardTimeout = null;
 
 const cardsVirados = [null, null];
 const professores = ['amauri.jpeg', 'awdren.jpg', 'edna.jpeg', 'hudson.jpeg', 'jane.jpg', 'jucele.jpg', 'liana.jpeg', 'mongelli.jpg', 'renan.jpg', 'said.jpeg', 'samuel.jpeg', 'takashi.jpg'];
 
 function openCard(event) {
-	const target = event.target;
+	if (intervalo === null) startTimer();
 
-	console.log(cardsVirados, target, cardsVirados[0] !== target);
-	if (cardsVirados[0] === null) {
+	const target = event.target;
+	
+	if (target.classList.contains('virado')) {
+		return;
+	} else if (cardsVirados[0] === null) {
 		target.classList.add('virado');
 		cardsVirados[0] = target;
-	} else if (cardsVirados[1] === null && cardsVirados[0] !== target) {
+	} else if (cardsVirados[1] === null) {
+		if (cardsVirados[0] === target) return;
+		
+		document.querySelector('span.jogadas-count').innerHTML = (jogadas += 1);
+
 		target.classList.add('virado');
 		cardsVirados[1] = target;
+		
 
 		if (cardsVirados[0].classList[1] === cardsVirados[1].classList[1]) {
 			cardsVirados[0] = cardsVirados[1] = null;
+			document.querySelector('span.acertos-count').innerHTML = (acertos += 1);
+			document.querySelector('span.pontuacao-count').innerHTML = (pontuacao += 10);
+			if (acertos == 12) {
+				stopTimer();
+				openModal();
+			}
 		} else {
-			setTimeout(() => {
-				cardsVirados.forEach((celula) => celula.classList.remove('virado'));
-				cardsVirados[0] = cardsVirados[1] = null;
-			}, 900);
+			document.querySelector('span.pontuacao-count').innerHTML = (pontuacao -= 2);
+			restauraCardTimeout = setTimeout(restauraCardsAbertos, 1500);
 		}
 
-
-
-		incrementaJogada();
+		submitResults();
+	} else {
+		restauraCardsAbertos();
+		openCard(event);
 	}
 }
 
-function incrementaJogada() {
-	if (inicio === null) startTimer();
+function restauraCardsAbertos() {
+	if (restauraCardTimeout) {
+		clearTimeout(restauraCardTimeout);
+		restauraCardTimeout = null;
+	}
 
-	jogadas += 1;
-	document.querySelector('span.jogadas-count').innerHTML = jogadas;
+	cardsVirados.forEach((celula) => celula.classList.remove('virado'));
+	cardsVirados[0] = cardsVirados[1] = null;
+}
+
+function openModal() {
+	var elem = document.getElementById('modal');
+	var modal = M.Modal.init(elem, {
+		opacity: 0.9,
+		preventScrolling: true,
+		dismissible: false,
+		startingTop: '10%',
+		onOpenStart() {
+			elem.querySelector("#pontuacao").innerHTML = pontuacao;
+			if (elem.querySelector(".register-message")) {
+				elem.querySelector(".register-message").querySelector("a").addEventListener('click', (e) => {
+					if (uuid) e.target.href += "?uuid=" + uuid;
+				});
+			}
+		},
+		onCloseEnd() {
+			modal.destroy();
+		}
+	});
+
+	modal.open();
 }
 
 function startTimer() {
-	if (inicio !== null) return;
+	if (intervalo !== null) return;
+
+	fetch(`${CONTEXT_PATH}/partidas`)
+		.then((response) => response.json())
+		.then((data) => sessionStorage.setItem("uuid", (uuid = data.uuid)));
 
 	inicio = Date.now();
-	jogadas = 0;
+	jogadas = acertos = pontuacao = 0;
 
 	intervalo = setInterval(
 		() => {
@@ -54,9 +102,18 @@ function startTimer() {
 	)
 }
 
+function submitResults() {
+	return fetch(`${CONTEXT_PATH}/partidas`, {
+		method: "POST",
+		cache: 'no-cache',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: new URLSearchParams({ uuid: uuid, tempo: Date.now() - inicio, acertos, jogadas, pontuacao })
+	});
+}
+
 function stopTimer() {
 	clearInterval(intervalo);
-	inicio = null;
+	intervalo = null;
 }
 
 function restartTimer() {
@@ -71,7 +128,7 @@ function restartTimer() {
 
 	const novasCelulas = [];
 	const photoOrder = _.shuffle(professores);
-	
+
 	for (let i = 0; i < 12; i++) {
 		for (let j = 0; j < 2; j++) {
 			let celula = document.createElement('div');
@@ -79,7 +136,7 @@ function restartTimer() {
 			celula.addEventListener('click', openCard);
 			let content = document.createElement('img');
 			content.src = `${CONTEXT_PATH}/public/imagens/professores/${photoOrder[i]}`;
-			const cropper = new Cropper(content, { viewMode: 3, minContainerWidth: 75, minContainerHeight: 85, autoCrop: false, background: false } );
+			const cropper = new Cropper(content, { viewMode: 3, minContainerWidth: 75, minContainerHeight: 85, autoCrop: false, background: false });
 			celula.append(content);
 			novasCelulas.push(celula);
 		}

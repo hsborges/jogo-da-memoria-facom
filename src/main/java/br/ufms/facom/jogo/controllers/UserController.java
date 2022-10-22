@@ -47,16 +47,16 @@ public class UserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String action = request.getParameter("action");
-        
+
         if (action != null && action.equals("sair")) {
             request.getSession().removeAttribute("jogador");
             request.getSession().invalidate();
             response.sendRedirect(request.getContextPath() + "/");
             return;
         }
-        
+
         request.getRequestDispatcher("/WEB-INF/usuario.jsp").forward(request, response);
     }
 
@@ -69,6 +69,7 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
+        String uuid = request.getParameter("uuid");
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -92,19 +93,32 @@ public class UserController extends HttpServlet {
                         .setParameter("email", email).getSingleResult();
                 if (res > 0)
                     throw new Exception("Email já cadastrado!");
-                this.em.persist(new Jogador(name, email, password, encodedString));
+
+                Jogador jogador = new Jogador(name, email, password, encodedString);
+                this.em.persist(jogador);
+
+                if (uuid != null) {
+                    this.em.createQuery("UPDATE Partida p SET p.jogador = :jogador WHERE p.uuid = :uuid")
+                        .setParameter("uuid", uuid)
+                        .setParameter("jogador", jogador)
+                        .executeUpdate();
+                    
+                    request.setAttribute("partida", request.getSession().getAttribute(uuid));
+                    request.getRequestDispatcher("/partida").forward(request, response);
+                }
+                
+                
+
                 this.em.flush();
                 trx.commit();
-                response.sendRedirect(request.getContextPath() + "/");
             } catch (Exception e) {
                 trx.rollback();
                 request.setAttribute("message", e.getMessage());
                 this.doGet(request, response);
+                return;
             }
-
-            return;
         }
-        
+
         try {
             Jogador jogador = (Jogador) this.em
                     .createQuery("SELECT j FROM Jogador j WHERE j.email = :email AND j.password = :password")
@@ -112,10 +126,19 @@ public class UserController extends HttpServlet {
                     .setParameter("password", password)
                     .getSingleResult();
 
-            response.sendRedirect(request.getContextPath() + "/");
-
             HttpSession session = request.getSession();
             session.setAttribute("jogador", jogador);
+            
+            if (uuid != null) {
+                this.em.getTransaction().begin();
+                this.em.createQuery("UPDATE Partida p SET p.jogador = :jogador WHERE p.uuid = :uuid")
+                    .setParameter("uuid", uuid)
+                    .setParameter("jogador", jogador)
+                    .executeUpdate();
+                this.em.getTransaction().commit();
+            }
+
+            response.sendRedirect(request.getContextPath() + "/?uuid=" + uuid);
         } catch (NoResultException nre) {
             request.setAttribute("message", "Usuário não encontrado ou senha incorreta!");
             this.doGet(request, response);
