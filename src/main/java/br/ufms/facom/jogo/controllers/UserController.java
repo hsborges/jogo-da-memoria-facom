@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import br.ufms.facom.jogo.entities.Jogador;
 
@@ -94,20 +95,20 @@ public class UserController extends HttpServlet {
                 if (res > 0)
                     throw new Exception("Email já cadastrado!");
 
-                Jogador jogador = new Jogador(name, email, password, encodedString);
+                String encodedPassword = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt(12));
+                
+                Jogador jogador = new Jogador(name, email, encodedPassword, encodedString);
                 this.em.persist(jogador);
 
                 if (uuid != null) {
                     this.em.createQuery("UPDATE Partida p SET p.jogador = :jogador WHERE p.uuid = :uuid")
-                        .setParameter("uuid", uuid)
-                        .setParameter("jogador", jogador)
-                        .executeUpdate();
-                    
+                            .setParameter("uuid", uuid)
+                            .setParameter("jogador", jogador)
+                            .executeUpdate();
+
                     request.setAttribute("partida", request.getSession().getAttribute(uuid));
                     request.getRequestDispatcher("/partida").forward(request, response);
                 }
-                
-                
 
                 this.em.flush();
                 trx.commit();
@@ -121,20 +122,21 @@ public class UserController extends HttpServlet {
 
         try {
             Jogador jogador = (Jogador) this.em
-                    .createQuery("SELECT j FROM Jogador j WHERE j.email = :email AND j.password = :password")
+                    .createQuery("SELECT j FROM Jogador j WHERE j.email = :email")
                     .setParameter("email", email)
-                    .setParameter("password", password)
                     .getSingleResult();
+            
+            if (!BCrypt.checkpw(password, jogador.getPassword())) throw new NoResultException("Email ou password não conferem");
 
             HttpSession session = request.getSession();
             session.setAttribute("jogador", jogador);
-            
+
             if (uuid != null) {
                 this.em.getTransaction().begin();
                 this.em.createQuery("UPDATE Partida p SET p.jogador = :jogador WHERE p.uuid = :uuid")
-                    .setParameter("uuid", uuid)
-                    .setParameter("jogador", jogador)
-                    .executeUpdate();
+                        .setParameter("uuid", uuid)
+                        .setParameter("jogador", jogador)
+                        .executeUpdate();
                 this.em.getTransaction().commit();
             }
 
