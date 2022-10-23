@@ -113,6 +113,7 @@ function openModal() {
 		},
 		onCloseEnd() {
 			modal.destroy();
+			window.history.pushState({}, document.title, `${CONTEXT_PATH}/home`);
 		}
 	});
 

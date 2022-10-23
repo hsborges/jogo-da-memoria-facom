@@ -1,28 +1,38 @@
-package br.ufms.facom.jogo.repositories.ranking;
+package br.ufms.facom.jogo.repositories;
+
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 
 import br.ufms.facom.jogo.entities.Partida;
 import br.ufms.facom.jogo.entities.Ranking;
 
 @Stateless
-public class RankingRepositoryImpl implements RankingRepository {
+public class RankingRepository {
 
-    private EntityManager em = Persistence.createEntityManagerFactory("pu-sqlite").createEntityManager();
+    @PersistenceContext(unitName = "pu-sqlite")
+    private EntityManager em;
 
-    @Override
     public Ranking findById(String uuid) {
         return this.em.find(Ranking.class, uuid);
     }
 
-    @Override
     public Ranking findByPartida(Partida partida) {
         return this.findById(partida.getUuid());
     }
 
-    @Override
+    public List<Ranking> getTopPartidas() {
+        return this.getTopPartidas(10);
+    }
+
+    public List<Ranking> getTopPartidas(int limit) {
+        return this.em.createQuery("SELECT r FROM Ranking r", Ranking.class)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
     public Ranking save(Ranking instance) throws Exception {
         if (!instance.getPartida().isFinalizada())
             throw new Exception("Somente partidas finalizadas podem entrar no ranking!");
@@ -33,8 +43,6 @@ public class RankingRepositoryImpl implements RankingRepository {
                 .createQuery("SELECT COUNT(r) FROM Ranking r WHERE r.partida.pontuacao > :pontuacao")
                 .setParameter("pontuacao", instance.getPartida().getPontuacao())
                 .getSingleResult();
-
-        System.out.println(position);
 
         instance.setPosicao((Long) position);
 

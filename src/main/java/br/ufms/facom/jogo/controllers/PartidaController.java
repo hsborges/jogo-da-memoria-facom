@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import br.ufms.facom.jogo.entities.Jogador;
 import br.ufms.facom.jogo.entities.Partida;
 import br.ufms.facom.jogo.entities.Ranking;
-import br.ufms.facom.jogo.repositories.partidas.PartidasRepository;
-import br.ufms.facom.jogo.repositories.ranking.RankingRepository;
+import br.ufms.facom.jogo.repositories.PartidasRepository;
+import br.ufms.facom.jogo.repositories.RankingRepository;
 
 /**
  * Servlet implementation class PartidaController
@@ -28,10 +28,10 @@ import br.ufms.facom.jogo.repositories.ranking.RankingRepository;
 public class PartidaController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    @EJB(name = "PartidasRepositoryImpl")
+    @EJB
     private PartidasRepository partidasRepo;
 
-    @EJB(name = "RankingRepositoryImpl")
+    @EJB
     private RankingRepository rankingRepo;
 
     private ObjectWriter jsonWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -75,30 +75,38 @@ public class PartidaController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String uuid = request.getParameter("uuid");
+
+        Partida partida = null;
         Jogador jogador = (Jogador) request.getSession().getAttribute("jogador");
 
-        String uuid = request.getParameter("uuid");
-        if (uuid == null)
-            return;
+        if (request.getAttribute("partida") != null) {
+            partida = (Partida) request.getAttribute("partida");
+        } else {
+            if (uuid == null)
+                throw new ServletException("UUID ou partida é obrigatório!");
 
-        Long tempo = Long.parseLong(request.getParameter("tempo"));
-        Long jogadas = Long.parseLong(request.getParameter("jogadas"));
-        Long acertos = Long.parseLong(request.getParameter("acertos"));
-        String ordemAcertos = request.getParameter("ordemAcertos");
-        Long pontuacao = Long.parseLong(request.getParameter("pontuacao"));
+            Long tempo = Long.parseLong(request.getParameter("tempo"));
+            Long jogadas = Long.parseLong(request.getParameter("jogadas"));
+            Long acertos = Long.parseLong(request.getParameter("acertos"));
+            String ordemAcertos = request.getParameter("ordemAcertos");
+            Long pontuacao = Long.parseLong(request.getParameter("pontuacao"));
 
-        Partida partida = this.partidasRepo.save(new Partida(uuid, jogador, tempo, acertos, ordemAcertos, jogadas, pontuacao));
+            partida = this.partidasRepo
+                    .save(new Partida(uuid, jogador, tempo, acertos, ordemAcertos, jogadas, pontuacao));
+        }
 
         if (partida.isFinalizada()) {
             try {
                 this.rankingRepo.save(new Ranking(jogador, partida));
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
 
         request.getSession().setAttribute(uuid, partida);
+
+        response.sendRedirect(request.getContextPath() + "/home?uuid=" + uuid);
     }
 
 }

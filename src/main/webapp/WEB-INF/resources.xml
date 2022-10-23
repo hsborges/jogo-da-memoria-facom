@@ -2,7 +2,7 @@
 <tomee>
 	<Resource id="myDS" type="DataSource">
 		JdbcDriver = org.sqlite.JDBC
-		JdbcUrl = jdbc:sqlite:jogo.db
+		JdbcUrl = jdbc:sqlite:./jogo.dev.db
 		UserName =
 		Password =
 	</Resource>

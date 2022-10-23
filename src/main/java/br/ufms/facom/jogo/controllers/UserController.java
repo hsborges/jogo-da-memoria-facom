@@ -3,23 +3,23 @@ package br.ufms.facom.jogo.controllers;
 import java.io.IOException;
 import java.util.Base64;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import javax.ejb.EJB;
 import javax.persistence.NoResultException;
-import javax.persistence.Persistence;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import br.ufms.facom.jogo.entities.Jogador;
+import br.ufms.facom.jogo.entities.Partida;
+import br.ufms.facom.jogo.repositories.JogadorRepository;
+import br.ufms.facom.jogo.repositories.PartidasRepository;
 
 /**
  * Servlet implementation class UserController
@@ -32,7 +32,11 @@ import br.ufms.facom.jogo.entities.Jogador;
 public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    private EntityManager em = Persistence.createEntityManagerFactory("pu-sqlite").createEntityManager();
+    @EJB
+    private JogadorRepository jogadorRepository;
+
+    @EJB
+    private PartidasRepository partidaRepository;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -86,34 +90,32 @@ public class UserController extends HttpServlet {
                 encodedString = Base64.getEncoder().encodeToString(IOUtils.toByteArray(avtarPart.getInputStream()));
             }
 
-            EntityTransaction trx = this.em.getTransaction();
-
             try {
-                trx.begin();
-                Long res = (Long) this.em.createQuery("SELECT COUNT(j) FROM Jogador j WHERE j.email = :email")
-                        .setParameter("email", email).getSingleResult();
-                if (res > 0)
+                if (this.jogadorRepository.hasJogador(email))
                     throw new Exception("Email já cadastrado!");
 
-                String encodedPassword = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt(12));
-                
-                Jogador jogador = new Jogador(name, email, encodedPassword, encodedString);
-                this.em.persist(jogador);
+                String encriptedPassword = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt(12));
+                Jogador jogador = new Jogador(name, email, encriptedPassword, encodedString);
+
+                this.jogadorRepository.save(jogador);
+
+                request.getSession().setAttribute("jogador", jogador);
 
                 if (uuid != null) {
-                    this.em.createQuery("UPDATE Partida p SET p.jogador = :jogador WHERE p.uuid = :uuid")
-                            .setParameter("uuid", uuid)
-                            .setParameter("jogador", jogador)
-                            .executeUpdate();
+                    Partida partida = partidaRepository.findById(uuid);
 
-                    request.setAttribute("partida", request.getSession().getAttribute(uuid));
-                    request.getRequestDispatcher("/partida").forward(request, response);
+                    if (partida.getJogador() == null) {
+                        partida.setJogador(jogador);
+                        this.partidaRepository.save(partida);
+                    }
                 }
 
-                this.em.flush();
-                trx.commit();
+                if (uuid != null) {
+                    request.setAttribute("partida", request.getSession().getAttribute(uuid));
+                    request.getRequestDispatcher("/partidas").forward(request, response);
+                    return;
+                }
             } catch (Exception e) {
-                trx.rollback();
                 request.setAttribute("message", e.getMessage());
                 this.doGet(request, response);
                 return;
@@ -121,26 +123,23 @@ public class UserController extends HttpServlet {
         }
 
         try {
-            Jogador jogador = (Jogador) this.em
-                    .createQuery("SELECT j FROM Jogador j WHERE j.email = :email")
-                    .setParameter("email", email)
-                    .getSingleResult();
-            
-            if (!BCrypt.checkpw(password, jogador.getPassword())) throw new NoResultException("Email ou password não conferem");
+            Jogador jogador = this.jogadorRepository.findById(email);
 
-            HttpSession session = request.getSession();
-            session.setAttribute("jogador", jogador);
+            if (!BCrypt.checkpw(password, jogador.getPassword()))
+                throw new NoResultException("Email ou password não conferem");
+
+            request.getSession().setAttribute("jogador", jogador);
 
             if (uuid != null) {
-                this.em.getTransaction().begin();
-                this.em.createQuery("UPDATE Partida p SET p.jogador = :jogador WHERE p.uuid = :uuid")
-                        .setParameter("uuid", uuid)
-                        .setParameter("jogador", jogador)
-                        .executeUpdate();
-                this.em.getTransaction().commit();
+                Partida partida = partidaRepository.findById(uuid);
+
+                if (partida.getJogador() == null) {
+                    partida.setJogador(jogador);
+                    this.partidaRepository.save(partida);
+                }
             }
 
-            response.sendRedirect(request.getContextPath() + "/home?uuid=" + uuid);
+            response.sendRedirect(request.getContextPath() + "/home" + (uuid != null ? ("?uuid=" + uuid) : ""));
         } catch (NoResultException nre) {
             request.setAttribute("message", "Usuário não encontrado ou senha incorreta!");
             this.doGet(request, response);

@@ -106,6 +106,7 @@
 	.ranking {
 	  width: 325px;
 	  padding: 0 10px;
+	  text-align: center;
 	}
 	
 	.ranking > .title {
@@ -199,6 +200,9 @@
 			<div class="title">
 				<span>Ranking</span>
 			</div>
+			<c:if test="${ranking.size() == 0}">
+				<span class="empty">Nenhum registro encontrado, seja o primeiro a entrar!</span>
+			</c:if>
 			<c:forEach var="rank" varStatus="status" items="${ranking}">
 				<div class="user">
 					<p class="position">

@@ -37,7 +37,7 @@
 			<label for="password" class="white-text">Senha</label>
 		</div>
 		<div class="row">
-			<a href="${requestScope['javax.servlet.forward.request_uri']}?action=cadastro" class="white-text underline">Novo usuário? Cadastre-se!</a>
+			<a href="${requestScope['javax.servlet.forward.request_uri']}?action=cadastro&${requestScope['javax.servlet.forward.query_string']}" class="white-text underline">Novo usuário? Cadastre-se!</a>
 			<button type="submit" class="btn primary-text right">Login</button>
 		</div>
 	</form>
