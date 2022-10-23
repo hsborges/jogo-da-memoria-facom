@@ -66,7 +66,8 @@ public class JogadorController extends HttpServlet {
     }
 
     /**
-     * O POST pode realizar o cadastro do usuário (se action=cadastro) ou fazer login (caso contrário)
+     * O POST pode realizar o cadastro do usuário (se action=cadastro) ou fazer
+     * login (caso contrário)
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -132,10 +133,9 @@ public class JogadorController extends HttpServlet {
             if (uuid != null) {
                 Partida partida = partidaRepository.findById(uuid);
 
-                if (partida.getJogador() == null) {
-                    partida.setJogador(jogador);
-                    this.partidaRepository.save(partida);
-                }
+                if (partida.getJogador() == null) partida.setJogador(jogador);
+
+                this.partidaRepository.save(partida);
             }
 
             response.sendRedirect(request.getContextPath() + "/home" + (uuid != null ? ("?uuid=" + uuid) : ""));

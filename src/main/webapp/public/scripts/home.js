@@ -31,7 +31,6 @@ String.prototype.hashCode = function() {
 }
 
 function submitResults() {
-	console.log(new URLSearchParams({ uuid: uuid, tempo: Date.now() - inicio, acertos, ordemAcertos, jogadas, pontuacao: Math.ceil(pontuacao) }));
 	return fetch(`${CONTEXT_PATH}/partidas`, {
 		method: "POST",
 		cache: 'no-cache',

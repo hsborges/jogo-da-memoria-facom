@@ -103,6 +103,7 @@ public class PartidaController extends HttpServlet {
         }
 
         if (partida.isFinalizada()) {
+            System.out.println(partida); 
             try {
                 this.rankingRepo.save(new Ranking(partida.getJogador(), partida));
             } catch (Exception e) {

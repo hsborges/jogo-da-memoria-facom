@@ -46,13 +46,11 @@ public class RankingRepository {
 
         instance.setPosicao((Long) position);
 
-        this.em.getTransaction().begin();
         this.em.persist(instance);
         this.em.createQuery(
                 "UPDATE Ranking r SET r.posicao = r.posicao + 1 WHERE r.partida.pontuacao < :pontuacao")
                 .setParameter("pontuacao", instance.getPartida().getPontuacao())
                 .executeUpdate();
-        this.em.getTransaction().commit();
 
         return instance;
     }
