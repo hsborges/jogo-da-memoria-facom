@@ -22,14 +22,15 @@ import br.ufms.facom.jogo.repositories.JogadorRepository;
 import br.ufms.facom.jogo.repositories.PartidasRepository;
 
 /**
- * Servlet implementation class UserController
+ * Servlet para tratar dos dados das partidas
+ * Tem atividade assíncronas servindo como registro para requisições assíncronas
  */
 @WebServlet("/usuario")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
         maxFileSize = 1024 * 1024 * 10, // 10 MB
         maxRequestSize = 1024 * 1024 * 100 // 100 MB
 )
-public class UserController extends HttpServlet {
+public class JogadorController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
@@ -41,13 +42,12 @@ public class UserController extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UserController() {
+    public JogadorController() {
         super();
     }
 
     /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
+     * O GET é usado para logout de usuário ou para exibir a página de login
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -66,8 +66,7 @@ public class UserController extends HttpServlet {
     }
 
     /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-     *      response)
+     * O POST pode realizar o cadastro do usuário (se action=cadastro) ou fazer login (caso contrário)
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

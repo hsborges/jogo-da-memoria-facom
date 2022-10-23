@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import br.ufms.facom.jogo.repositories.RankingRepository;
 
 /**
- * Servlet implementation class HomeController
+ * Servlet responsável por apresentar a tela inicial (jogo)
+ * Para isso é fornecido o ranking (top partidas)
  */
 @WebServlet(value = "/home")
 public class HomeController extends HttpServlet {
