@@ -121,4 +121,12 @@ public class Jogador implements Serializable {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "Jogador [name=" + name + ", email=" + email + ", password=" + password + ", avatar=" + avatar
+                + ", createdAt=" + createdAt + ", partidas=" + partidas + "]";
+    }
+    
+    
+
 }

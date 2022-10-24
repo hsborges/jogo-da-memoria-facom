@@ -43,59 +43,27 @@
 	</form>
 </c:set>
 
-<c:set var="infoForm">
-	<form method="post" class="col s8 offset-s2" enctype="multipart/form-data">
-		<div class="row input-field">
-			<label for="name" class="white-text">Nome</label> 
-			<input id="name" name="name" type="text" required="required" value="${sessionScope.jogador.name}" class="white-text"/>
-		</div>
-		<div class="row input-field">
-			<label for="email" class="white-text">Email</label>
-			<input id="email" name="email" type="email" required="required" value="${sessionScope.jogador.email}" disabled="disabled" class="white-text"/>
-		</div>
-		<div class="row input-field">
-			<label for="password" class="white-text">Senha</label>
-			<input id="password" name="password" type="password" required="required" class="white-text"/>
-		</div>
-		<div class="row input-field">
-			<label for="password-confirm" class="white-text">Confirmar senha</label>
-			<input id="password-confirm" type="password" required="required" class="white-text"/>
-		</div>
-		<div class="row file-field input-field">
-			<div class="col s2 btn btn-small white primary-text">
-				<i class="material-icons">image</i>Avatar
-				<input name="avatar" type="file" accept=".png,.jpg,.jpeg"/>		
-			</div>
-			<div class="col s10 file-path-wrapper">
-		        <input class="file-path validate" type="text">
-		    </div>
-		</div>
-		<div class="row">
-			<a href="${requestScope['javax.servlet.forward.request_uri']}?&action=sair" class="white-text underline valign-wrapper">Sair</a>
-			<button class="btn btn right primary-text" type="submit" onclick="return validaSenhas(this);">
-				Atualizar<i class="material-icons primary-text right">save</i>
-			</button>
-		</div>
-	</form>
-</c:set>
 
-<c:set var="cadastroForm"> 
+
+<c:set var="cadastroForm">
+	<c:set var="isInfo" value="${param.action == 'info'}" />
+ 
 	<form method="post" class="col s8 offset-s2" enctype="multipart/form-data">
 		<div class="row input-field">
 			<label for="name" class="white-text">Nome</label> 
-			<input id="name" name="name" type="text" required="required"  class="white-text"/>
+			<input id="name" name="name" type="text" required="required"  class="white-text" value="${sessionScope.jogador.name}"/>
 		</div>
 		<div class="row input-field">
 			<label for="email" class="white-text">Email</label>
-			<input id="email" name="email" type="email" required="required" class="white-text" />
+			<input id="email" name="email" type="email" required="required" class="white-text" ${isInfo ? 'readonly' : ''} value="${sessionScope.jogador.email}" />
 		</div>
 		<div class="row input-field">
 			<label for="password" class="white-text">Senha</label>
-			<input id="password" name="password" type="password" required="required" class="white-text"/>
+			<input id="password" name="password" type="password" required="required" class="white-text" />
 		</div>
 		<div class="row input-field">
 			<label for="password-confirm" class="white-text">Confirmar senha</label>
-			<input id="password-confirm" type="password" required="required" class="white-text"/>
+			<input id="password-confirm" type="password" required="required" class="white-text" />
 		</div>
 		<div class="row file-field input-field">
 			<div class="col s2 btn btn-small white primary-text">
@@ -107,11 +75,18 @@
 		    </div>
 		</div>
 		<div class="row">
-			<a href="${requestScope['javax.servlet.forward.request_uri']}" class="white-text underline left">
-				Possui conta? Faça login!
-			</a>
+			<c:if test="${!isInfo}">
+				<a href="${requestScope['javax.servlet.forward.request_uri']}" class="white-text underline left">
+					Possui conta? Faça login!
+				</a>
+			</c:if>
+			<c:if test="${isInfo}">
+				<a href="${requestScope['javax.servlet.forward.request_uri']}?&action=sair" class="white-text underline valign-wrapper">Sair</a>
+			</c:if>
 			<button class="btn primary-text" type="submit" onclick="return validaSenhas(this);">
-				Cadastrar<i class="material-icons primary-text right">save</i>
+				<c:if test="${!isInfo}">Cadastrar</c:if>
+				<c:if test="${isInfo}">Atualizar</c:if>
+				<i class="material-icons primary-text right">save</i>
 			</button>
 		</div>
 	</form>
@@ -124,11 +99,8 @@
 		<div class="container"> 
 			<div class="row">
 				<c:choose>
-					<c:when test="${param.action == 'cadastro'}">
+					<c:when test="${param.action != null}">
 					${cadastroForm}	
-					</c:when>
-					<c:when test="${param.action == 'info'}">
-					${infoForm}	
 					</c:when>
 					<c:otherwise>
 					${loginForm}

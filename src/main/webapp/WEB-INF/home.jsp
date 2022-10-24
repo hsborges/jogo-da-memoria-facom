@@ -106,7 +106,6 @@
 	.ranking {
 	  width: 325px;
 	  padding: 0 10px;
-	  text-align: center;
 	}
 	
 	.ranking > .title {

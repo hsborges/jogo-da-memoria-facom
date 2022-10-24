@@ -62,7 +62,10 @@ public class JogadorController extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/WEB-INF/usuario.jsp").forward(request, response);
+        if (request.getSession().getAttribute("jogador") != null && (action == null || !action.equals("info")))
+            response.sendRedirect(request.getContextPath() + "/usuario?action=info");
+        else 
+            request.getRequestDispatcher("/WEB-INF/usuario.jsp").forward(request, response);    
     }
 
     /**
@@ -79,7 +82,7 @@ public class JogadorController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if (action != null && action.equals("cadastro")) {
+        if (action != null && (action.equals("cadastro") || action.equals("info"))) {
             String name = request.getParameter("name");
 
             Part avtarPart = request.getPart("avatar");
@@ -91,8 +94,13 @@ public class JogadorController extends HttpServlet {
             }
 
             try {
-                if (this.jogadorRepository.hasJogador(email))
+                Jogador previousInfo = this.jogadorRepository.findById(email);
+
+                if (action.equals("cadastro") && previousInfo != null) {
                     throw new Exception("Email já cadastrado!");
+                } else if (action.equals("info") && encodedString == null) {
+                    encodedString = previousInfo.getAvatar();
+                }
 
                 String encriptedPassword = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt(12));
                 Jogador jogador = new Jogador(name, email, encriptedPassword, encodedString);
@@ -133,7 +141,8 @@ public class JogadorController extends HttpServlet {
             if (uuid != null) {
                 Partida partida = partidaRepository.findById(uuid);
 
-                if (partida.getJogador() == null) partida.setJogador(jogador);
+                if (partida.getJogador() == null)
+                    partida.setJogador(jogador);
 
                 this.partidaRepository.save(partida);
             }
